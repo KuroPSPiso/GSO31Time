@@ -7,6 +7,9 @@ package fontys.time;
  * @author frankpeeters
  */
 public interface ITime extends Comparable<ITime> {
+
+
+    public int compareTo(ITime t);
     
     /**
      * 
