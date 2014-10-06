@@ -106,23 +106,21 @@ public class PeriodTest{
         Assert.assertNotNull("Geen eindtijd aanwezig Period object is niet valide * difference was false", instance.getEndTime());
     }
     
-    @Test(expected = InvalidValueException.class)
+    @Test
     public void testSetBeginTime1() {
         /**
          * beginTime will be the new begin time of this period
          * @param beginTime must be earlier than the current end time
          * of this period
          */
-        Time beginTime = new Time(1999,2,2,0,1);
-        Time beginTimeOOB = new Time(1999,2,2,3,0);
+        Time beginTime = new Time(1999,2,2,3,1);
         Time endTime = new Time(1999,2,2,2,0);
+        
         Period instance = new Period(beginTime, endTime);
         
-        if(endTime == instance.getEndTime())
-        {
-            instance.setBeginTime(beginTimeOOB);
-        }
-        Assert.fail();
+        Assert.assertNull(instance.getBeginTime());
+        Assert.assertNull(instance.getEndTime());
+        
     }
 
     /**
@@ -164,7 +162,7 @@ public class PeriodTest{
         
         //add 5minutes.
         int minutes = 5;
-        Time beginTime = new Time(1999,2,2,0,1);
+        Time beginTime = new Time(1999,2,2,0,0);
         Time endTime = new Time(1999,2,2,2,0);
         Period instance = new Period(beginTime, endTime);
         
@@ -181,7 +179,7 @@ public class PeriodTest{
         
         Assert.assertTrue((instance.getEndTime().difference(endTime) == 0));
         Assert.assertEquals(instance.getEndTime().getMinutes(), endTime.getMinutes());
-        Assert.assertFalse(instance.getEndTime().getMinutes(), endTime.getMinutes());
+        Assert.assertFalse(instance.getEndTime().getMinutes() == endTime.getMinutes() + 5);
         
         System.out.println("move: succesfull");
     }
@@ -196,11 +194,24 @@ public class PeriodTest{
         * @param minutes  minutes + length of this period must be positive  
         */
         System.out.println("changeLengthWith: start");
-        int minutes = 0;
-        Period instance = null;
+        
+        int minutes = 5;
+        Time beginTime = new Time(1999,2,2,0,0);
+        Time endTime = new Time(1999,2,2,2,0);
+        Period instance = new Period(beginTime, endTime);
+        
+        instance.setBeginTime(beginTime);
+        instance.setEndTime(endTime);
+        
+        Assert.assertEquals(instance.getEndTime(), endTime);
+        
         instance.changeLengthWith(minutes);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        Assert.assertTrue("Time not changed", instance.getEndTime().getMinutes() == endTime.getMinutes() + 5);
+        
+        instance.changeLengthWith(-minutes);
+        
+        Assert.assertFalse("Time added can't be negative", instance.getEndTime().getMinutes() == endTime.getMinutes());
         
         System.out.println("changeLengthWith: succesfull");
     }
@@ -217,15 +228,17 @@ public class PeriodTest{
         * otherwise false
         */
         System.out.println("isPartOf: start");
-        IPeriod period = null;
-        Period instance = null;
-        boolean expResult = false;
+        IPeriod period = p4;
+        Period instance = p1;
+        
+        period.setBeginTime(bt4);
+        period.setEndTime(et4);
+        instance.setBeginTime(bt1);
+        instance.setEndTime(et1);
+        
+        boolean expResult = true;
         boolean result = instance.isPartOf(period);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-        
-        System.out.println("isPartOf: succesfull");
     }
 
     /**
@@ -242,13 +255,17 @@ public class PeriodTest{
         * otherwise null will be returned 
         */
         System.out.println("unionWith: start");
-        IPeriod period = null;
-        Period instance = null;
-        IPeriod expResult = null;
+        IPeriod period = p1;
+        Period instance = p2;
+        
+        period.setBeginTime(bt1);
+        period.setEndTime(et1);
+        instance.setBeginTime(bt2);
+        instance.setEndTime(et2);
+        
+        IPeriod expResult = new Period(bt1, et2);
         IPeriod result = instance.unionWith(period);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
         
         System.out.println("isPartOf: succesfull");
     }
@@ -266,13 +283,17 @@ public class PeriodTest{
         * be returned
         */
         System.out.println("intersectionWith: start");
-        IPeriod period = null;
-        Period instance = null;
-        IPeriod expResult = null;
+        IPeriod period = p1;
+        Period instance = p2;
+        
+        period.setBeginTime(bt1);
+        period.setEndTime(et1);
+        instance.setBeginTime(bt6);
+        instance.setEndTime(et6);
+        
+        IPeriod expResult = new Period(et1, bt6);
         IPeriod result = instance.intersectionWith(period);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
         
         System.out.println("intersectionWith: succesfull");
     }

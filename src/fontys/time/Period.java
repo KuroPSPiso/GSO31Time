@@ -7,6 +7,7 @@
 package fontys.time;
 
 import com.oracle.jrockit.jfr.InvalidValueException;
+import com.sun.media.jfxmedia.logging.Logger;
 
 
 /**
@@ -85,16 +86,19 @@ public class Period implements IPeriod{
 
     @Override
     public void changeLengthWith(int minutes) {
-        this.et.plus(minutes);
+        if(Math.abs(minutes) == minutes)
+            this.et = this.et.plus(Math.abs(minutes));
+        else
+            Logger.logMsg(0, "Not allowed to add negative values");
     }
 
     @Override
     public boolean isPartOf(IPeriod period) {
-        if(     (bt.difference(period.getBeginTime()) > 0 &&
-                et.difference(period.getEndTime()) < 0 ) 
+        if(     (bt.compareTo(period.getBeginTime()) > 0 &&
+                et.compareTo(period.getEndTime()) < 0 ) 
                 ||
-                (et.difference(period.getEndTime()) > 0 &&
-                bt.difference(period.getBeginTime()) < 0 )
+                (et.compareTo(period.getEndTime()) > 0 &&
+                bt.compareTo(period.getBeginTime()) < 0 )
                 )
         {
             return true;
@@ -113,23 +117,31 @@ public class Period implements IPeriod{
         
         Period pResult = null;
         
-        if(bt1.difference(bt2) > 0)
+        if(bt1.compareTo(bt2) > 0)
             bt1First = true;
         else 
             bt1First = false;
         
         if(bt1First)
         {
-            if(et1.equals(bt2))// || ( et1 > bt2 && et2 > et1 && bt1 < bt2))
+            if(et1.equals(bt2))
             {
-                
+                pResult = new Period(bt1, et2);
+            }
+            if(et1.compareTo(bt2) > 0 && et1.compareTo(et2) < 0)
+            {
+                pResult = new Period(bt1, et2);
             }
         }
         else
         {
             if(et2.equals(bt1))
             {
-                
+                pResult = new Period(bt2, et1);
+            }
+            if(et2.compareTo(bt1) < 0 && et2.compareTo(et1) > 0)
+            {
+                pResult = new Period(bt2, et1);
             }
         }
         
@@ -146,21 +158,32 @@ public class Period implements IPeriod{
         
         Period pResult = null;
         
-        if(bt1.difference(bt2) > 0)
+        if(bt1.compareTo(bt2) > 0)
             bt1First = true;
         else 
             bt1First = false;
         
         if(bt1First)
         {
-            if(false)// || ( et1 > bt2 && et2 > et1 && bt1 < bt2))
+            if(et1.equals(bt2))
             {
-                
+                pResult = new Period(et1, bt2);
+            }
+            if(et1.compareTo(bt2) > 0 && et1.compareTo(et2) < 0)
+            {
+                pResult = new Period(et1, bt2);
             }
         }
         else
         {
-            
+            if(et2.equals(bt1))
+            {
+                pResult = new Period(et2, bt1);
+            }
+            if(et2.compareTo(bt1) > 0 && et2.compareTo(et1) < 0)
+            {
+                pResult = new Period(et2, bt1);
+            }
         }
         
         return pResult;
