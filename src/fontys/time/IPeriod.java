@@ -17,7 +17,7 @@ public interface IPeriod {
      * 
      * @return the begin time of this period
      */
-    ITime getBeginTime();
+    ITime getBeginTime() ;
 
     /**
      * 

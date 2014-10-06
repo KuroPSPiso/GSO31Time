@@ -6,6 +6,9 @@
 
 package fontys.time;
 
+import com.oracle.jrockit.jfr.InvalidValueException;
+
+
 /**
  *
  * @author Ryan-KuroTenshi
@@ -46,8 +49,27 @@ public class Period implements IPeriod{
     }
 
     @Override
-    public void setBeginTime(ITime beginTime) {
-        this.bt = beginTime;
+    public void setBeginTime(ITime beginTime)  {
+        try
+        {
+            validateSetBeginTime(beginTime.difference(this.et));
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        finally
+        {
+            this.bt = beginTime;
+        }
+    }
+    
+    public void validateSetBeginTime(int i) throws InvalidValueException
+    {
+        if(i > 0)
+        {
+            throw new InvalidValueException("Begin time is before end time");
+        }
     }
 
     @Override
@@ -57,8 +79,8 @@ public class Period implements IPeriod{
 
     @Override
     public void move(int minutes) {
-        this.et.plus(minutes);
-        this.bt.plus(minutes);
+        this.et = this.et.plus(minutes);
+        this.bt = this.bt.plus(minutes);
     }
 
     @Override

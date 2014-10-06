@@ -21,7 +21,6 @@ public class Time implements ITime {
     
     public Time(int y, int m, int d, int h, int min)
     {
-
         calendar.set(y, m, d, h, min);
     }
 
@@ -75,16 +74,25 @@ public class Time implements ITime {
     @Override
     public int difference(ITime time) {
         Calendar calendar2 =  new GregorianCalendar();
-        calendar2.set(time.getYear(), time.getMonth(), time.getDay(), time.getHours(), this.getMinutes());
+        calendar2.set(time.getYear(), time.getMonth(), time.getDay(), time.getHours(), time.getMinutes());
         calendar.getTime().getTime();
-        if (calendar == calendar2)
+        
+        int i = this.calendar.getTime().compareTo(calendar2.getTime());
+        long difference = this.calendar.getTimeInMillis() - calendar2.getTimeInMillis();
+        long differenceMinutes = difference / (60 * 1000) % 60; 
+        if (i == 0) //same
         {
-            return 1;
+            return 0;
         }
-        else
-            
-                  
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        else if(i > 0) //higher
+        {
+            return (int)differenceMinutes;
+        }
+        else //lower
+        {
+            return (int)differenceMinutes;
+        }
+            //return (int)( - calendar2.getTime().getTime());//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
