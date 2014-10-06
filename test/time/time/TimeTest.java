@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 
-package fontys.time;
+package time.time;
 
+import fontys.time.DayInWeek;
+import fontys.time.ITime;
+import fontys.time.Time;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
